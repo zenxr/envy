@@ -35,6 +35,9 @@ def downloader(user_folder, file_name, image_url):
 	maintype = ''
 	subtype = ''
 	ensure_dir(user_folder)
+	opener=urllib.request.build_opener()
+	opener.addheaders=[('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1941.0 Safari/537.36')]
+	urllib.request.install_opener(opener)
 	with urllib.request.urlopen(image_url) as response:
 		info = response.info()
 		maintype = info.get_content_type()  # -> text
@@ -45,6 +48,8 @@ def downloader(user_folder, file_name, image_url):
 	else:
 		fullfilename = os.path.join(user_folder, file_name + "." + subtype)
 		urllib.request.urlretrieve(image_url,fullfilename)
+		return("Success")
+
 
 def ensure_dir(file_path):
 	safe_name = './' + file_path.replace('/', '_')
@@ -70,7 +75,12 @@ async def on_message(message):
 		await client.send_message(message.channel, "Greetings! I work")
 	if message.content.startswith('!add'):
 		args = splitmessage(message.content)
-		downloader(args[1], args[2], args[3])
+		result = downloader(args[1], args[2], args[3])
+		if result == "Success":
+			await client.send_message(message.channel, f"Added `{args[2]}` for user **{args[1]}**")
+		if result == "Invalid file type!":
+			await client.send_message(message.channel, "I think there was an error. Invalid file type? I accept most image types.")
+
 
 
 # start the bot
