@@ -32,16 +32,20 @@ def splitmessage(s):
 	return words
 
 def downloader(user_folder, file_name, image_url):
+	if not image_url.startswith('http://' or 'https://'):
+		print('Invalid URL')
+		return('Invalid URL')
 	maintype = ''
 	subtype = ''
 	ensure_dir(user_folder)
 	opener=urllib.request.build_opener()
 	opener.addheaders=[('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1941.0 Safari/537.36')]
 	urllib.request.install_opener(opener)
+	# we should check for valid url before running this
 	with urllib.request.urlopen(image_url) as response:
 		info = response.info()
 		maintype = info.get_content_type()  # -> text
-		subtype = info.get_content_subtype()  # -> html
+		subtype = info.get_content_subtype()  # -> html)
 	if maintype not in ('image/png', 'image/jpeg', 'image/gif'):
 		print("Invalid file type!")
 		return("Invalid file type!")
@@ -75,11 +79,26 @@ async def on_message(message):
 		await client.send_message(message.channel, "Greetings! I work")
 	if message.content.startswith('!add'):
 		args = splitmessage(message.content)
+		# current version of downloader assumes the file name is only 1 word
+		# should convert to lowercase and remove spaces, etc
 		result = downloader(args[1], args[2], args[3])
 		if result == "Success":
 			await client.send_message(message.channel, f"Added `{args[2]}` for user **{args[1]}**")
-		if result == "Invalid file type!":
-			await client.send_message(message.channel, "I think there was an error. Invalid file type? I accept most image types.")
+		else:
+			await client.send_message(message.channel, result)
+	elif message.content.startswith('!help'):
+		await client.send_message(message.channel, "This command isn't finished yet")
+	elif message.content.startswith('!search'):
+		# check the rest of the message for correct formatting
+		# check that the user folder exists
+		# check that the file exists
+		# else, spit out error messages
+		await client.send_message(message.channel, "This command isn't finished yet")
+	elif message.content.startswith('!show'):
+		args = splitmessage(message.content)
+		# this needs to work with multiple filetypes (png, jpeg, jpg, etc)
+		# also, spaces, underscores, capitalization, etc
+		await client.send_file(message.channel, f"./{args[1]}/{args[2]}.png")
 
 
 
