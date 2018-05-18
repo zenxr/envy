@@ -117,6 +117,13 @@ async def on_message(message):
 		# check that the file exists
 		# else, spit out error messages
 		await client.send_message(message.channel, "This command isn't finished yet")
+	elif message.content.startswith('!delete'):
+		args = splitmessage(message.content)
+		for name in os.listdir('./data/' + args[1].lower()):
+			if '_'.join(args[2:len(args)-1]).replace(' ', '_').lower() in name:
+				print("./data/" + args[1].lower() + "/" + name)
+				os.remove("./data/" + args[1].lower() + "/" + name)
+ 
 	elif message.content.startswith('!show'):
 		args = splitmessage(message.content)
 		if len(args)==1:
@@ -129,6 +136,8 @@ async def on_message(message):
 					print(os.path.basename(item[:-1]))
 					titles = ""
 					for title in glob(item + "/*"): titles = titles + os.path.basename(title) + "\r\n"
+					if titles == "":
+						titles = "empty"
 					embed.add_field(name=os.path.basename(item[:-1]), value=titles, inline=True)
 				await client.send_message(message.channel, embed=embed)
 		# for now, assume that it'll be !show username
