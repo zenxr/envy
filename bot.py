@@ -106,7 +106,7 @@ async def on_message(message):
 		# should convert to lowercase and remove spaces, etc
 		result = downloader(args)
 		if result == "Success":
-			await client.send_message(message.channel, f"Added `{args[2].replace('_', ' ')}` for user **{args[1]}**")
+                        await client.send_message(message.channel, "Added " + args[2].replace('_', ' ') + " for user **" + args[1] + "**")
 		else:
 			await client.send_message(message.channel, result)
 	elif message.content.startswith('!help'):
@@ -148,7 +148,7 @@ async def on_message(message):
 			searchName = args[2:len(args)-1]
 			for name in os.listdir('./data/' + args[1].lower()):
 				if args[2].replace(' ', '_').lower() in name:
-					await client.send_file(message.channel, f"./data/{args[1]}/{name}")
+					await client.send_file(message.channel, "./data/" + args[1] + "/" + name)
 		# if just !show (no extra arguments) print an overview
 		# this needs to work with multiple filetypes (png, jpeg, jpg, etc)
 		# also, spaces, underscores, capitalization, etc
