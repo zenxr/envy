@@ -7,6 +7,9 @@ import os
 import re
 from glob import glob
 
+# temporary, remove soon
+import subprocess
+
 ###########################
 # config.py file\t\t  #
 ###########################
@@ -100,6 +103,13 @@ async def on_message(message):
 	message.content = message.content.lower()
 	if message.content.startswith('!greet'):
 		await client.send_message(message.channel, "Greetings! I work")
+	if message.content.startswith('!howdoi'):
+		print(message.content.split(' ', 1)[1])
+		result = subprocess.run(['howdoi', message.content.split(' ', 1)[1]], stdout=subprocess.PIPE)
+		print("\r\n")
+		print((result.stdout.decode('utf-8')))
+		await client.send_message(message.channel, '```' + (result.stdout.decode('utf-8') + '```'))
+
 	if message.content.startswith('!add'):
 		args = parseinput(message.content)
 		print(args)
