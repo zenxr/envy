@@ -50,7 +50,7 @@ def splitmessage(s):
 	return words
 
 def downloader(args):
-	user_folder = args[0]
+	user_folder = args[0].lower()
 	file_name = args[1]
 	image_url = args[2]
 	print(image_url)
@@ -97,6 +97,7 @@ async def on_ready():
 # runs when a message is recieved
 @client.event
 async def on_message(message):
+	message.content = message.content.lower()
 	if message.content.startswith('!greet'):
 		await client.send_message(message.channel, "Greetings! I work")
 	if message.content.startswith('!add'):
@@ -106,11 +107,16 @@ async def on_message(message):
 		# should convert to lowercase and remove spaces, etc
 		result = downloader(args)
 		if result == "Success":
-                        await client.send_message(message.channel, "Added " + args[2].replace('_', ' ') + " for user **" + args[1] + "**")
+                        await client.send_message(message.channel, "Added *" + args[1].replace('_', ' ') + "* for user **" + args[0] + "**")
 		else:
 			await client.send_message(message.channel, result)
 	elif message.content.startswith('!help'):
-		await client.send_message(message.channel, "This command isn't finished yet")
+		embed = discord.Embed(title="**__Envy's Help Message__**", description="Envy is a bot used to manage images for users", inline="false")
+		embed.add_field(name="!help", value="Displays this message", inline="false")
+		embed.add_field(name="!show", value="Prints a list of users and their images", inline="false")
+		embed.add_field(name="!add", value="Adds an image for a user. Format: '!add Username ImageTitle url'", inline="false")
+		embed.add_field(name="!delete", value="Removes an image for a given user by title. Format: '!delete User1 some image title", inline="false")
+		await client.send_message(message.channel, embed=embed)
 	elif message.content.startswith('!search'):
 		# check the rest of the message for correct formatting
 		# check that the user folder exists
@@ -156,7 +162,7 @@ async def on_message(message):
 		if len(args)>=3:
 			searchName = args[2:len(args)-1]
 			for name in os.listdir('./data/' + args[1].lower()):
-				if args[2].replace(' ', '_').lower() in name:
+				if args[2].replace(' ', '_').lower() in name.lower():
 					await client.send_file(message.channel, "./data/" + args[1] + "/" + name)
 		# if just !show (no extra arguments) print an overview
 		# this needs to work with multiple filetypes (png, jpeg, jpg, etc)
