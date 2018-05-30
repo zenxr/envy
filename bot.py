@@ -105,10 +105,11 @@ async def on_message(message):
 		await client.send_message(message.channel, "Greetings! I work")
 	if message.content.startswith('!howdoi'):
 		print(message.content.split(' ', 1)[1])
+		url = subprocess.run(['howdoi', '-l', message.content.split(' ', 1)[1]], stdout=subprocess.PIPE)
 		result = subprocess.run(['howdoi', message.content.split(' ', 1)[1]], stdout=subprocess.PIPE)
-		print("\r\n")
-		print((result.stdout.decode('utf-8')))
-		await client.send_message(message.channel, '```' + (result.stdout.decode('utf-8') + '```'))
+		embed = discord.Embed(title=message.content, description='```' + (result.stdout.decode('utf-8') + '```\r\n[link](' + url.stdout.decode('utf-8') + ')'))
+		await client.send_message(message.channel, embed=embed)
+#		await client.send_message(message.channel, '[Answer Link]('+ url.stdout.decode('utf-8') + ')\r\n```' + (result.stdout.decode('utf-8') + '```'))
 
 	if message.content.startswith('!add'):
 		args = parseinput(message.content)
